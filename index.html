@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuFix | Form & Document Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans pb-10">
+
+    <nav class="bg-indigo-700 text-white p-4 shadow-md mb-8">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">DocuFix Multi-Tool</h1>
+            <p class="text-sm opacity-80">All-in-One Form Utilities</p>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 max-w-6xl">
+        
+        <h2 class="text-xl font-bold border-b-2 border-indigo-200 pb-2 mb-4 text-indigo-800">1. PAN Card Pre-sets (NSDL/UTIITSL)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+            <div class="bg-white p-5 rounded-lg shadow border-l-4 border-orange-500">
+                <h3 class="font-bold text-lg mb-1">PAN Passport Photo</h3>
+                <p class="text-xs text-gray-500 mb-3">Auto-crops to 213x213 px</p>
+                <form onsubmit="handleFormSubmit(event, '/api/resize', this.id)" id="panPhotoForm">
+                    <input type="hidden" name="preset" value="pan_photo">
+                    <input type="file" name="image" accept="image/*" required class="mb-3 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-orange-50 file:text-orange-700">
+                    <button type="submit" class="w-full bg-orange-500 text-white p-2 rounded hover:bg-orange-600">Generate</button>
+                </form>
+            </div>
+            <div class="bg-white p-5 rounded-lg shadow border-l-4 border-orange-500">
+                <h3 class="font-bold text-lg mb-1">PAN Signature</h3>
+                <p class="text-xs text-gray-500 mb-3">Auto-formats to 400x200 px</p>
+                <form onsubmit="handleFormSubmit(event, '/api/resize', this.id)" id="panSigForm">
+                    <input type="hidden" name="preset" value="pan_sig">
+                    <input type="file" name="image" accept="image/*" required class="mb-3 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-orange-50 file:text-orange-700">
+                    <button type="submit" class="w-full bg-orange-500 text-white p-2 rounded hover:bg-orange-600">Generate</button>
+                </form>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-bold border-b-2 border-indigo-200 pb-2 mb-4 text-indigo-800">2. Image Tools</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-blue-500">
+                <h3 class="font-bold text-lg mb-2">Custom Resizer</h3>
+                <form onsubmit="handleFormSubmit(event, '/api/resize', this.id)" id="resizeForm">
+                    <input type="file" name="image" accept="image/*" required class="mb-3 block w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
+                    <div class="flex gap-2 mb-3">
+                        <input type="number" step="0.01" name="width" placeholder="W" required class="border p-1 rounded w-1/3 text-sm">
+                        <input type="number" step="0.01" name="height" placeholder="H" required class="border p-1 rounded w-1/3 text-sm">
+                        <select name="unit" class="border p-1 rounded w-1/3 text-sm bg-gray-50">
+                            <option value="px">px</option>
+                            <option value="cm">cm</option>
+                            <option value="inch">in</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded text-sm hover:bg-blue-700">Resize</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-teal-500">
+                <h3 class="font-bold text-lg mb-2">KB Size Modifier</h3>
+                <p class="text-xs text-gray-500 mb-2">Force exact file size limits.</p>
+                <form onsubmit="handleFormSubmit(event, '/api/modify-image-size', this.id)" id="modifySizeForm">
+                    <input type="file" name="image" accept="image/*" required class="mb-3 block w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-teal-50 file:text-teal-700">
+                    <div class="flex items-center gap-2 mb-3">
+                        <input type="number" name="target_kb" placeholder="e.g. 50" required class="border p-1 rounded w-full text-sm">
+                        <span class="text-sm text-gray-500">KB</span>
+                    </div>
+                    <button type="submit" class="w-full bg-teal-500 text-white p-2 rounded text-sm hover:bg-teal-600">Compress / Inflate</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-purple-500">
+                <h3 class="font-bold text-lg mb-2">Background Replace</h3>
+                <form onsubmit="handleFormSubmit(event, '/api/remove-bg', this.id)" id="bgForm">
+                    <input type="file" name="image" accept="image/*" required class="mb-3 block w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-purple-50 file:text-purple-700" title="Original Image">
+                    <div class="flex gap-2 mb-3 items-center">
+                        <input type="color" name="bg_color" value="#00000000" class="w-8 h-8 cursor-pointer rounded" title="Color">
+                        <span class="text-xs">or</span>
+                        <input type="file" name="bg_image" accept="image/*" class="w-full text-xs border rounded p-1" title="Bg Image">
+                    </div>
+                    <button type="submit" class="w-full bg-purple-600 text-white p-2 rounded text-sm hover:bg-purple-700">Replace BG</button>
+                </form>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-bold border-b-2 border-indigo-200 pb-2 mb-4 text-indigo-800">3. Document Tools</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-green-500">
+                <h3 class="font-bold text-md mb-2">JPGs to PDF</h3>
+                <form onsubmit="handleFormSubmit(event, '/api/jpg-to-pdf', this.id)" id="jpgPdfForm">
+                    <input type="file" name="images" accept="image/*" multiple required class="mb-3 block w-full text-xs file:bg-green-50 file:text-green-700 border p-1 rounded">
+                    <button type="submit" class="w-full bg-green-600 text-white p-2 rounded text-sm hover:bg-green-700">Combine</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-blue-400">
+                <h3 class="font-bold text-md mb-2">PDF to DOCX</h3>
+                <form onsubmit="handleFormSubmit(event, '/api/pdf-to-doc', this.id)" id="pdfDocForm">
+                    <input type="file" name="pdf" accept=".pdf" required class="mb-3 block w-full text-xs file:bg-blue-50 file:text-blue-700 border p-1 rounded">
+                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded text-sm hover:bg-blue-600">Convert</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-red-500">
+                <h3 class="font-bold text-md mb-2">Merge PDFs</h3>
+                <form onsubmit="handleFormSubmit(event, '/api/merge-pdf', this.id)" id="mergePdfForm">
+                    <input type="file" name="pdfs" accept=".pdf" multiple required class="mb-3 block w-full text-xs file:bg-red-50 file:text-red-700 border p-1 rounded">
+                    <button type="submit" class="w-full bg-red-600 text-white p-2 rounded text-sm hover:bg-red-700">Merge</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-gray-700">
+                <h3 class="font-bold text-md mb-2">Compress PDF</h3>
+                <form onsubmit="handleFormSubmit(event, '/api/compress-pdf', this.id)" id="compressPdfForm">
+                    <input type="file" name="pdf" accept=".pdf" required class="mb-3 block w-full text-xs file:bg-gray-100 file:text-gray-700 border p-1 rounded">
+                    <button type="submit" class="w-full bg-gray-700 text-white p-2 rounded text-sm hover:bg-gray-800">Shrink</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-60 hidden flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg text-center shadow-xl">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mx-auto mb-3"></div>
+            <p class="font-bold text-md text-gray-800">Processing Request...</p>
+        </div>
+    </div>
+
+    <script>
+        async function handleFormSubmit(event, endpoint, formId) {
+            event.preventDefault();
+            const form = document.getElementById(formId);
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('hidden');
+
+            try {
+                const response = await fetch(endpoint, { method: 'POST', body: new FormData(form) });
+                if (!response.ok) throw new Error(await response.text() || "An error occurred");
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                
+                let filename = "download";
+                const disposition = response.headers.get('Content-Disposition');
+                if (disposition && disposition.indexOf('filename=') !== -1) {
+                    let matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+                    if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                }
+
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                
+                window.URL.revokeObjectURL(url);
+                form.reset(); 
+            } catch (error) { alert("Error: " + error.message); } 
+            finally { overlay.classList.add('hidden'); }
+        }
+    </script>
+</body>
+</html>
